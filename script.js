@@ -15,6 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initQuoteCarousel();
   initScrollCue();
   initDragGallery();
+  initMenuTabs();
+  initQuickView();
+  initLightbox();
+  initOrderForm();
+  initScrollTop();
 
   if (!reduceMotion && !isTouch) {
     initCursor();
@@ -53,7 +58,9 @@ function checkWatchers() {
   for (let i = _watchers.length - 1; i >= 0; i--) {
     const { el, cb, margin } = _watchers[i];
     const r = el.getBoundingClientRect();
-    if (r.top < vh * (1 - margin) && r.bottom > vh * margin) {
+    // Trigger once the element reaches the reveal line — including elements
+    // already scrolled past (fast scrolls can jump straight over them).
+    if (r.top < vh * (1 - margin)) {
       _watchers.splice(i, 1);
       cb(el);
     }
@@ -92,7 +99,7 @@ function runPreloader(done) {
   [...text].forEach((ch, i) => {
     const s = document.createElement('span');
     s.className = 'ltr';
-    s.innerHTML = ch === ' ' || ch === ' ' ? '&nbsp;' : ch;
+    s.innerHTML = ch === ' ' || ch === ' ' ? '&nbsp;' : ch;
     s.style.transitionDelay = `${i * 45}ms`;
     word.appendChild(s);
   });
@@ -329,7 +336,7 @@ function initParallax() {
   update();
 }
 
-/* ---------------- HERO MOUSE PARALLAX (layered depth + 3D tilt) ---------------- */
+/* ---------------- HERO MOUSE PARALLAX (layered depth) ---------------- */
 function initHeroMouseParallax() {
   const hero = document.getElementById('hero');
   if (!hero || isTouch) return;
@@ -463,4 +470,205 @@ function initScrollCue() {
   window.addEventListener('scroll', () => {
     cue.style.opacity = window.scrollY > 120 ? '0' : '1';
   }, { passive: true });
+}
+
+/* ---------------- MENU TABS ---------------- */
+function initMenuTabs() {
+  const tabs = document.querySelectorAll('.menu-tab');
+  const panels = document.querySelectorAll('.menu-panel');
+  if (!tabs.length) return;
+
+  tabs.forEach(tab => tab.addEventListener('click', () => {
+    tabs.forEach(t => {
+      t.classList.toggle('is-active', t === tab);
+      t.setAttribute('aria-selected', t === tab);
+    });
+    panels.forEach(p => p.classList.toggle('is-active', p.dataset.panel === tab.dataset.tab));
+  }));
+}
+
+/* ---------------- QUICK-VIEW MODAL ---------------- */
+function initQuickView() {
+  const modal = document.getElementById('quickView');
+  if (!modal) return;
+  const img = document.getElementById('qvImg');
+  const name = document.getElementById('qvName');
+  const desc = document.getElementById('qvDesc');
+  const allergens = document.getElementById('qvAllergens');
+  const price = document.getElementById('qvPrice');
+  let lastFocus = null;
+
+  const open = (card) => {
+    img.src = card.dataset.img;
+    img.alt = card.dataset.name;
+    name.textContent = card.dataset.name;
+    desc.textContent = card.dataset.desc;
+    allergens.textContent = card.dataset.allergens;
+    price.textContent = card.dataset.price;
+    lastFocus = document.activeElement;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    modal.querySelector('.modal-close').focus();
+  };
+  const close = () => {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (lastFocus) lastFocus.focus();
+  };
+
+  document.querySelectorAll('[data-item]').forEach(card => {
+    card.addEventListener('click', () => open(card));
+    card.setAttribute('tabindex', '0');
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(card); }
+    });
+  });
+  modal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
+  });
+}
+
+/* ---------------- GALLERY LIGHTBOX (drag-aware) ---------------- */
+function initLightbox() {
+  const box = document.getElementById('lightbox');
+  const strip = document.getElementById('filmstrip');
+  if (!box || !strip) return;
+  const imgEl = document.getElementById('lbImg');
+  const frames = [...strip.querySelectorAll('.frame img')];
+  let index = 0;
+  let downX = 0, downY = 0;
+
+  const show = (i) => {
+    index = (i + frames.length) % frames.length;
+    imgEl.src = frames[index].src;
+    imgEl.alt = frames[index].alt;
+  };
+  const open = (i) => {
+    show(i);
+    box.classList.add('is-open');
+    box.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  };
+  const close = () => {
+    box.classList.remove('is-open');
+    box.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  // Only open when the pointer barely moved — a real click, not a drag.
+  strip.addEventListener('pointerdown', (e) => { downX = e.clientX; downY = e.clientY; });
+  strip.addEventListener('pointerup', (e) => {
+    if (Math.hypot(e.clientX - downX, e.clientY - downY) > 8) return;
+    const frame = e.target.closest('.frame');
+    if (!frame) return;
+    const i = [...strip.querySelectorAll('.frame')].indexOf(frame);
+    if (i > -1) open(i);
+  });
+
+  document.getElementById('lbPrev').addEventListener('click', () => show(index - 1));
+  document.getElementById('lbNext').addEventListener('click', () => show(index + 1));
+  box.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => {
+    if (!box.classList.contains('is-open')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') show(index - 1);
+    if (e.key === 'ArrowRight') show(index + 1);
+  });
+}
+
+/* ---------------- ORDER FORM ---------------- */
+function initOrderForm() {
+  const form = document.getElementById('orderForm');
+  if (!form) return;
+  const success = document.getElementById('orderSuccess');
+  const summary = document.getElementById('successSummary');
+  const waSuccess = document.getElementById('successWhatsApp');
+  const waLive = document.getElementById('orderWhatsApp');
+
+  // Pickup date can't be in the past.
+  const dateInput = form.querySelector('#ofDate');
+  dateInput.min = new Date().toISOString().split('T')[0];
+
+  const validators = {
+    name: v => v.trim().length >= 2 || 'Please tell us your name.',
+    phone: v => /^[\d\s()+\-.]{7,}$/.test(v.trim()) || 'Enter a valid phone number.',
+    item: v => !!v || 'Pick something delicious.',
+    date: v => {
+      if (!v) return 'Choose a pickup date.';
+      return v >= dateInput.min || 'Pickup date can\'t be in the past.';
+    }
+  };
+
+  const validateField = (input) => {
+    const rule = validators[input.name];
+    if (!rule) return true;
+    const result = rule(input.value);
+    const field = input.closest('.form-field');
+    const errEl = field.querySelector('.field-error');
+    if (result !== true) {
+      field.classList.add('has-error');
+      errEl.textContent = result;
+      return false;
+    }
+    field.classList.remove('has-error');
+    errEl.textContent = '';
+    return true;
+  };
+
+  form.querySelectorAll('input, select').forEach(input => {
+    input.addEventListener('blur', () => validateField(input));
+    input.addEventListener('input', () => {
+      if (input.closest('.form-field').classList.contains('has-error')) validateField(input);
+    });
+  });
+
+  const buildWaLink = (data) => {
+    const msg = `Hi Velvet Crumbs! I'd like to order: ${data.item}` +
+      ` for pickup on ${data.date}. Name: ${data.name}, phone: ${data.phone}.` +
+      (data.notes ? ` Notes: ${data.notes}` : '');
+    return `https://wa.me/15551234567?text=${encodeURIComponent(msg)}`;
+  };
+
+  // Keep the live WhatsApp button in sync as the form is filled.
+  form.addEventListener('input', () => {
+    const data = Object.fromEntries(new FormData(form));
+    if (data.item || data.name) waLive.href = buildWaLink(data);
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const inputs = [...form.querySelectorAll('input[required], select[required]')];
+    const allValid = inputs.map(validateField).every(Boolean);
+    if (!allValid) {
+      form.querySelector('.has-error input, .has-error select')?.focus();
+      return;
+    }
+    const data = Object.fromEntries(new FormData(form));
+    summary.textContent = `${data.item} for pickup on ${data.date}. ` +
+      `We'll call ${data.phone} to confirm — usually within the hour.`;
+    waSuccess.href = buildWaLink(data);
+    form.hidden = true;
+    success.hidden = false;
+    success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  document.getElementById('orderAgain').addEventListener('click', () => {
+    form.reset();
+    form.hidden = false;
+    success.hidden = true;
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+}
+
+/* ---------------- SCROLL TO TOP ---------------- */
+function initScrollTop() {
+  const btn = document.getElementById('scrollTop');
+  if (!btn) return;
+  window.addEventListener('scroll', () => {
+    btn.classList.toggle('is-visible', window.scrollY > 700);
+  }, { passive: true });
+  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 }
