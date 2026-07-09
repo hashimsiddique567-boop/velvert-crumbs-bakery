@@ -6,6 +6,8 @@
 <title>Velvet Crumbs Bakery — Artisan Cakes &amp; Pastries</title>
 <meta name="description" content="Velvet Crumbs Bakery — handcrafted cakes, macarons, pastries and artisan bread baked fresh every morning in Maple Grove, ON.">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preload" as="image" href="assets/hero-cookie.jpg" fetchpriority="high">
+<meta name="theme-color" content="#f8ede3">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Velvet Crumbs Bakery — Artisan Cakes &amp; Pastries">
@@ -16,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,600;1,9..144,900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=6">
 
 <script type="application/ld+json">
 {
@@ -45,25 +47,20 @@
 </head>
 <body class="is-loading">
 
+<a class="skip-link" href="#menu">Skip to menu</a>
+
 <!-- ============ PRELOADER ============ -->
 <div class="preloader" id="preloader" aria-hidden="true">
   <p class="preloader-word" id="preWord">Velvet&nbsp;Crumbs</p>
   <span class="preloader-bar"><i id="preBar"></i></span>
 </div>
 
-<!-- ============ CUSTOM CURSOR ============ -->
-<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
-<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
-
 <div class="grain" aria-hidden="true"></div>
 <div class="scroll-progress" aria-hidden="true"><span id="scrollBar"></span></div>
 
 <!-- ============ NAV ============ -->
 <header class="site-nav" id="siteNav">
-  <a href="#hero" class="brand" data-hover>
-    <svg class="brand-mark" viewBox="0 0 64 64" width="26" height="26" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#d9a05b"/><path d="M32 3a29 29 0 0 0 0 58 29 29 0 0 0 27-18 22 22 0 0 1-16-21A22 22 0 0 1 47 7 29 29 0 0 0 32 3z" fill="#c9903f" opacity=".55"/><circle cx="22" cy="22" r="4.5" fill="#4a2c17"/><circle cx="40" cy="18" r="3.5" fill="#4a2c17"/><circle cx="45" cy="38" r="4" fill="#4a2c17"/><circle cx="28" cy="42" r="3.2" fill="#4a2c17"/><circle cx="16" cy="36" r="2.6" fill="#4a2c17"/><circle cx="35" cy="30" r="2.8" fill="#4a2c17"/></svg>
-    Velvet <em>Crumbs</em>
-  </a>
+  <a href="#hero" class="brand" data-hover>Velvet <em>Crumbs</em></a>
   <nav class="nav-links" id="navLinks">
     <a href="#story" data-hover>Story</a>
     <a href="#menu" data-hover>Menu</a>
@@ -104,15 +101,9 @@
         </div>
         <span>4.9 · 800+ happy locals</span>
       </div>
+      <div class="live-pill hero-el" id="liveStatus"><i aria-hidden="true"></i><span>Checking oven status…</span></div>
     </div>
 
-    <div class="hero-stage" id="heroStage" aria-hidden="true">
-      <span class="crumb crumb--1" data-depth="0.9"></span>
-      <span class="crumb crumb--2" data-depth="0.65"></span>
-      <span class="crumb crumb--3" data-depth="1.1"></span>
-      <span class="crumb crumb--4" data-depth="0.5"></span>
-      <span class="crumb crumb--5" data-depth="0.85"></span>
-    </div>
   </div>
 
   <button class="scroll-cue" id="scrollCue" aria-label="Scroll to explore" data-hover>
@@ -137,7 +128,6 @@
         <img src="assets/story-dough.jpg" alt="Baker's hands folding dough on a floured wooden table" width="1200" height="893" loading="lazy" data-speed="0.1" class="parallax-img" />
       </div>
       <div class="media-frame"></div>
-      <img class="story-croissant" src="assets/croissant-3d.png" alt="" width="256" height="256" aria-hidden="true" data-depth="0.4">
     </div>
     <div class="panel-copy">
       <p class="eyebrow reveal" data-reveal>✦ &nbsp;Our Story</p>
@@ -154,6 +144,47 @@
   </div>
 </section>
 
+<!-- ============ PROCESS (pinned scroll story) ============ -->
+<section class="process" id="process">
+  <div class="process-pin">
+    <div class="process-inner">
+      <div class="process-copy">
+        <p class="eyebrow">✦ &nbsp;How It's Made</p>
+        <h2 class="heading-lg">From flour<br>to crumb.</h2>
+        <div class="process-steps">
+          <div class="process-step is-active">
+            <span class="step-num">01</span>
+            <div>
+              <h3>Mix</h3>
+              <p>Stone-milled flour, cold water, sea salt — and a starter we've kept alive for nine years. Mixed by hand, never rushed.</p>
+            </div>
+          </div>
+          <div class="process-step">
+            <span class="step-num">02</span>
+            <div>
+              <h3>Proof</h3>
+              <p>Eighteen slow hours in the cold room. Flavour you can't fake, structure you can't shortcut.</p>
+            </div>
+          </div>
+          <div class="process-step">
+            <span class="step-num">03</span>
+            <div>
+              <h3>Bake</h3>
+              <p>Into a scorching stone deck at dawn. Out by seven — blistered, golden, and gone by noon.</p>
+            </div>
+          </div>
+        </div>
+        <div class="process-track" aria-hidden="true"><i id="processBar"></i></div>
+      </div>
+      <div class="process-media" aria-hidden="true">
+        <img src="assets/story-dough.jpg" alt="" class="is-active" loading="lazy">
+        <img src="assets/bread-farmhouse.jpg" alt="" loading="lazy">
+        <img src="assets/bread-sourdough.jpg" alt="" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ MENU ============ -->
 <section class="scene scene--menu" id="menu">
   <div class="section-head">
@@ -165,11 +196,12 @@
     <button class="menu-tab is-active" data-tab="cakes" role="tab" aria-selected="true" data-hover>Cakes</button>
     <button class="menu-tab" data-tab="pastries" role="tab" aria-selected="false" data-hover>Pastries</button>
     <button class="menu-tab" data-tab="bread" role="tab" aria-selected="false" data-hover>Bread</button>
+    <button class="menu-tab" data-tab="treats" role="tab" aria-selected="false" data-hover>Treats &amp; Drinks</button>
     <button class="menu-tab" data-tab="custom" role="tab" aria-selected="false" data-hover>Custom</button>
   </div>
 
   <div class="menu-panel is-active" data-panel="cakes">
-    <div class="menu-grid">
+    <div class="menu-grid menu-grid--three">
       <article class="menu-card" data-tilt data-hover data-item
         data-name="Signature Chocolate Cake" data-price="from $48"
         data-desc="Brown-butter sponge layered with whipped dark ganache and fresh berries. Serves 8–12."
@@ -216,6 +248,31 @@
           <h3>Slice of the Day</h3>
           <p>Today's bake, by the slice. Ask what's on.</p>
           <span class="price">$7</span>
+        </div>
+      </article>
+
+      <article class="menu-card" data-tilt data-hover data-item
+        data-name="Berry Cheesecake" data-price="from $38"
+        data-desc="Baked New York style cheesecake on a buttered graham crust, topped with strawberries and blueberries. Whole cake or by the slice."
+        data-allergens="Contains: gluten, dairy, eggs" data-img="assets/cake-cheesecake.jpg">
+        <div class="menu-card__media"><img src="assets/cake-cheesecake.jpg" alt="Berry cheesecake slice with strawberries and blueberries" width="900" height="1125" loading="lazy"></div>
+        <div class="menu-card__body">
+          <h3>Berry Cheesecake</h3>
+          <p>New York style, graham crust, fresh berries.</p>
+          <span class="price">from $38</span>
+        </div>
+      </article>
+
+      <article class="menu-card" data-tilt data-hover data-item
+        data-name="Cookies &amp; Cream Cake" data-price="from $52"
+        data-desc="Layers of chocolate cookie crumb, cream filling and fudge drizzle, crowned with whole cookies. A crowd silencer."
+        data-allergens="Contains: gluten, dairy, eggs, soy" data-img="assets/cake-oreo.jpg">
+        <span class="card-badge">New</span>
+        <div class="menu-card__media"><img src="assets/cake-oreo.jpg" alt="Cookies and cream cake with fudge drizzle" width="1024" height="1024" loading="lazy"></div>
+        <div class="menu-card__body">
+          <h3>Cookies &amp; Cream Cake</h3>
+          <p>Cookie crumb layers, cream, fudge drizzle.</p>
+          <span class="price">from $52</span>
         </div>
       </article>
     </div>
@@ -315,6 +372,60 @@
     </div>
   </div>
 
+  <div class="menu-panel" data-panel="treats">
+    <div class="menu-grid">
+      <article class="menu-card" data-tilt data-hover data-item
+        data-name="Sugared Donuts" data-price="$3.50 each"
+        data-desc="Brioche donuts rolled in cinnamon sugar while still warm. Fried in small batches through the morning."
+        data-allergens="Contains: gluten, dairy, eggs" data-img="assets/treat-donuts.jpg">
+        <span class="card-badge">New</span>
+        <div class="menu-card__media"><img src="assets/treat-donuts.jpg" alt="Stack of glazed sprinkle donuts" width="800" height="1000" loading="lazy"></div>
+        <div class="menu-card__body">
+          <h3>Sugared Donuts</h3>
+          <p>Warm brioche donuts, small-batch fried.</p>
+          <span class="price">$3.50 each</span>
+        </div>
+      </article>
+
+      <article class="menu-card" data-tilt data-hover data-item
+        data-name="Hand-Spun Milkshake" data-price="$8"
+        data-desc="Thick hand-spun shake with whipped cream. Rotating flavours — caramel, strawberry, cookies &amp; cream."
+        data-allergens="Contains: dairy · gluten-free" data-img="assets/treat-milkshake.jpg">
+        <div class="menu-card__media"><img src="assets/treat-milkshake.jpg" alt="Hand-spun milkshake with whipped cream" width="800" height="534" loading="lazy"></div>
+        <div class="menu-card__body">
+          <h3>Hand-Spun Milkshake</h3>
+          <p>Thick, hand-spun, rotating flavours.</p>
+          <span class="price">$8</span>
+        </div>
+      </article>
+
+      <article class="menu-card" data-tilt data-hover data-item
+        data-name="Strawberry Waffles" data-price="$12"
+        data-desc="Golden Belgian waffles with macerated strawberries, whipped cream and maple syrup. Served until 2pm."
+        data-allergens="Contains: gluten, dairy, eggs" data-img="assets/treat-waffles.jpg">
+        <span class="card-badge">New</span>
+        <div class="menu-card__media"><img src="assets/treat-waffles.jpg" alt="Belgian waffles on a plate" width="800" height="640" loading="lazy"></div>
+        <div class="menu-card__body">
+          <h3>Strawberry Waffles</h3>
+          <p>Belgian waffles, strawberries, maple syrup.</p>
+          <span class="price">$12</span>
+        </div>
+      </article>
+
+      <article class="menu-card" data-tilt data-hover data-item
+        data-name="Blue Mint Cooler" data-price="$6"
+        data-desc="Our virgin blue mojito — muddled mint, fresh lime and blue citrus soda over crushed ice. The summer counter favourite."
+        data-allergens="Vegan · gluten-free" data-img="assets/treat-mojito.jpg">
+        <div class="menu-card__media"><img src="assets/treat-mojito.jpg" alt="Blue mint cooler with lime and mint" width="833" height="1250" loading="lazy"></div>
+        <div class="menu-card__body">
+          <h3>Blue Mint Cooler</h3>
+          <p>Muddled mint, lime, blue citrus soda.</p>
+          <span class="price">$6</span>
+        </div>
+      </article>
+    </div>
+  </div>
+
   <div class="menu-panel" data-panel="custom">
     <div class="custom-panel reveal-instant">
       <div class="custom-copy">
@@ -357,6 +468,8 @@
     <div class="frame reveal" data-reveal><img src="assets/bread-farmhouse.jpg" alt="Fresh bread loaves on wood" width="800" height="1200" loading="lazy" draggable="false"></div>
     <div class="frame reveal" data-reveal><img src="assets/bakery-counter.jpg" alt="Bakery display counter" width="800" height="1200" loading="lazy" draggable="false"></div>
     <div class="frame reveal" data-reveal><img src="assets/pastry-box.jpg" alt="Assorted pastries close up" width="800" height="640" loading="lazy" draggable="false"></div>
+    <div class="frame reveal" data-reveal><img src="assets/cake-cheesecake.jpg" alt="Berry cheesecake slice" width="900" height="1125" loading="lazy" draggable="false"></div>
+    <div class="frame reveal" data-reveal><img src="assets/cake-oreo.jpg" alt="Cookies and cream cake" width="1024" height="1024" loading="lazy" draggable="false"></div>
   </div>
 </section>
 
@@ -433,6 +546,8 @@
               <option>Signature Chocolate Cake</option>
               <option>Ganache Drip Cake</option>
               <option>Celebration Cake</option>
+              <option>Berry Cheesecake</option>
+              <option>Cookies &amp; Cream Cake</option>
             </optgroup>
             <optgroup label="Pastries">
               <option>Butter Croissant (×6)</option>
@@ -443,6 +558,12 @@
             <optgroup label="Bread">
               <option>Country Sourdough</option>
               <option>Seeded Farmhouse Loaf</option>
+            </optgroup>
+            <optgroup label="Treats &amp; Drinks">
+              <option>Sugared Donuts (×6)</option>
+              <option>Hand-Spun Milkshake</option>
+              <option>Strawberry Waffles</option>
+              <option>Blue Mint Cooler</option>
             </optgroup>
             <option>Custom order — describe below</option>
           </select>
@@ -618,6 +739,6 @@
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20V4M5 11l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </button>
 
-<script src="script.js"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>

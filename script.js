@@ -20,9 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
   initLightbox();
   initOrderForm();
   initScrollTop();
+  initProcess();
+  initLiveStatus();
+  if (!reduceMotion) {
+    initHeroExit();
+    initCrumbBurst();
+  }
 
   if (!reduceMotion && !isTouch) {
-    initCursor();
     initMagnetic();
   }
   if (!reduceMotion) {
@@ -166,30 +171,6 @@ function buildSplitLines() {
   // Non-hero splits reveal when scrolled into view.
   document.querySelectorAll('.split:not(#hero .split)').forEach(el => {
     watchViewport(el, () => el.classList.add('in-view'), 0.12);
-  });
-}
-
-/* ---------------- CUSTOM CURSOR ---------------- */
-function initCursor() {
-  const dot = document.getElementById('cursorDot');
-  const ring = document.getElementById('cursorRing');
-  let mx = -100, my = -100, rx = -100, ry = -100;
-
-  window.addEventListener('mousemove', (e) => {
-    mx = e.clientX; my = e.clientY;
-    dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%,-50%)`;
-  }, { passive: true });
-
-  (function follow() {
-    rx += (mx - rx) * 0.16;
-    ry += (my - ry) * 0.16;
-    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%,-50%)`;
-    requestAnimationFrame(follow);
-  })();
-
-  document.querySelectorAll('[data-hover]').forEach(el => {
-    el.addEventListener('mouseenter', () => ring.classList.add('grow'));
-    el.addEventListener('mouseleave', () => ring.classList.remove('grow'));
   });
 }
 
@@ -458,6 +439,110 @@ function initQuoteCarousel() {
     timer = setInterval(next, 6000);
   }
   restart();
+}
+
+/* ---------------- HERO SCROLL EXIT (cinematic pull-away) ---------------- */
+function initHeroExit() {
+  const bg = document.querySelector('.hero-bg');
+  const copy = document.querySelector('.hero-copy');
+  if (!bg || !copy) return;
+  bg.style.transformOrigin = 'center 30%';
+
+  const update = () => {
+    const vh = window.innerHeight;
+    if (window.scrollY > vh * 1.2) return;
+    const p = Math.min(1, window.scrollY / (vh * 0.9));
+    bg.style.transform = `scale(${(1 + p * 0.07).toFixed(4)})`;
+    copy.style.transform = `translateY(${(-46 * p).toFixed(1)}px)`;
+    copy.style.opacity = String(Math.max(0, 1 - p * 1.15));
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+}
+
+/* ---------------- PROCESS SECTION (pinned scroll story) ---------------- */
+function initProcess() {
+  const section = document.getElementById('process');
+  if (!section) return;
+  const steps = [...section.querySelectorAll('.process-step')];
+  const imgs = [...section.querySelectorAll('.process-media img')];
+  const bar = document.getElementById('processBar');
+
+  const update = () => {
+    const rect = section.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const total = rect.height - vh;
+    if (total <= 0) return;
+    const p = Math.min(1, Math.max(0, -rect.top / total));
+    const idx = Math.min(steps.length - 1, Math.floor(p * steps.length));
+    steps.forEach((s, i) => s.classList.toggle('is-active', i === idx));
+    imgs.forEach((im, i) => im.classList.toggle('is-active', i === idx));
+    if (bar) bar.style.width = `${(p * 100).toFixed(1)}%`;
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+}
+
+/* ---------------- CRUMB BURST ON BUTTON CLICKS ---------------- */
+function initCrumbBurst() {
+  const colors = ['#d9a05b', '#b06e3b', '#b96a4e', '#8a5a3b'];
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn, .nav-cta');
+    if (!btn) return;
+    const count = 12;
+    for (let i = 0; i < count; i++) {
+      const bit = document.createElement('span');
+      bit.className = 'burst-bit';
+      const size = 4 + Math.random() * 6;
+      bit.style.left = `${e.clientX}px`;
+      bit.style.top = `${e.clientY}px`;
+      bit.style.width = `${size}px`;
+      bit.style.height = `${size}px`;
+      bit.style.background = colors[i % colors.length];
+      document.body.appendChild(bit);
+
+      const angle = (i / count) * Math.PI * 2 + Math.random() * 0.6;
+      const dist = 36 + Math.random() * 60;
+      const dx = Math.cos(angle) * dist;
+      const dy = Math.sin(angle) * dist + 24; // slight gravity
+      bit.animate([
+        { transform: 'translate(-50%,-50%) scale(1)', opacity: 1 },
+        { transform: `translate(calc(-50% + ${dx.toFixed(0)}px), calc(-50% + ${dy.toFixed(0)}px)) scale(.3)`, opacity: 0 }
+      ], {
+        duration: 550 + Math.random() * 350,
+        easing: 'cubic-bezier(.16,1,.3,1)'
+      }).onfinish = () => bit.remove();
+    }
+  });
+}
+
+/* ---------------- LIVE OPEN/CLOSED STATUS ---------------- */
+function initLiveStatus() {
+  const pill = document.getElementById('liveStatus');
+  if (!pill) return;
+  const label = pill.querySelector('span');
+  const now = new Date();
+  const day = now.getDay(); // 0 Sun … 6 Sat
+  const hour = now.getHours() + now.getMinutes() / 60;
+
+  let open = false, msg;
+  if (day === 1) {
+    msg = 'Closed Mondays — back tomorrow from 7am';
+  } else if (day >= 2 && day <= 5) {
+    open = hour >= 7 && hour < 18;
+    msg = open ? "Open now — today's bake is out of the oven"
+        : hour < 7 ? 'Opens 7am — first bake lands warm'
+        : 'Closed for today — back tomorrow 7am';
+  } else {
+    open = hour >= 8 && hour < 16;
+    msg = open ? "Open now — today's bake is out of the oven"
+        : hour < 8 ? 'Opens 8am — first bake lands warm'
+        : day === 6 ? 'Closed for today — back tomorrow 8am'
+        : 'Closed for today — back Tuesday 7am';
+  }
+  pill.classList.toggle('is-open', open);
+  label.textContent = msg;
 }
 
 /* ---------------- HERO SCROLL CUE ---------------- */
